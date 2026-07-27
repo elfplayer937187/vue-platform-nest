@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+// import { Test } from './common/entities/test.entity';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 
@@ -29,6 +30,7 @@ import jwtConfig from './config/jwt.config';
         timezone: '+08:00',
       }),
     }),
+    // TypeOrmModule.forFeature([Test]),
   ],
   controllers: [AppController],
   providers: [AppService],
