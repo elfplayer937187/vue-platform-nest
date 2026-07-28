@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'; // ← 新增
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 async function bootstrap() {
@@ -28,6 +29,20 @@ async function bootstrap() {
     allowedHeaders: 'Token,Content-Type,Authorization',
     maxAge: 86400,
   });
+  // Swagger 配置
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('硅谷甄选 API')
+    .setDescription('硅谷甄选后台管理系统接口文档')
+    .setVersion('1.0')
+    .addApiKey(
+      { type: 'apiKey', name: 'Token', in: 'header' },
+      'Token', // 这个名字用于引用
+    )
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('swagger', app, document);
+
   await app.listen(port);
 }
 bootstrap();

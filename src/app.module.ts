@@ -6,9 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // import { Test } from './common/entities/test.entity';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

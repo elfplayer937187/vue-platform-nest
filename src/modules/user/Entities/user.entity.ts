@@ -1,0 +1,34 @@
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+@Entity('user')
+export class User {
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  id: number;
+
+  @Column({ type: 'bigint', name: 'user_id', unique: true, comment: '用户id' })
+  userId: number;
+  // 账号
+  @Column({ unique: true, length: 50, comment: '用户名' })
+  username: string;
+
+  @Column({ length: 100, select: false, comment: '密码(bcrypt加密)' })
+  password: string;
+  // 昵称
+  @Column({ length: 50, default: '', comment: '昵称' })
+  name: string;
+
+  @Column({ length: 255, default: '', comment: '用户头像地址' })
+  avatar: string;
+
+  @CreateDateColumn({ name: 'create_time', type: 'timestamp' })
+  createTime: Date;
+
+  @UpdateDateColumn({ name: 'update_time', type: 'timestamp' })
+  updateTime: Date;
+}
