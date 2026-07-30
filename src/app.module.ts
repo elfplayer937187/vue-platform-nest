@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { Test } from './common/entities/test.entity';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import { UserModule } from './modules/user/user.module';
@@ -34,7 +33,6 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
     }),
     AuthModule,
-    // TypeOrmModule.forFeature([Test]),
   ],
   controllers: [AppController],
   providers: [AppService],
