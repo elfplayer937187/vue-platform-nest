@@ -12,7 +12,11 @@ export class RoleService {
     @InjectRepository(Role) private roleRepository: Repository<Role>,
   ) {}
   // 获取分页列表
-  async GetRolePagination(roleName: string, page: number, limit: number) {
+  async GetRolePagination(
+    roleName: string | null = null,
+    page: number,
+    limit: number,
+  ) {
     const query = this.roleRepository.createQueryBuilder('query');
     if (roleName) {
       query.where('query.roleName LIKE :roleName', { roleName });
@@ -46,11 +50,14 @@ export class RoleService {
       remark: dto.remark,
     });
     await this.roleRepository.save(newRole);
+    return null;
   }
 
   // 更新角色
   async UpdateRole(dto: UpdateRoleDto) {
     const user = await this.roleRepository.findOneBy({ roleId: dto.roleId });
+    console.log(211);
+
     if (!user) {
       throw new BusinessException(ErrorCode.USER_NOT_EXIST);
     }
@@ -58,6 +65,7 @@ export class RoleService {
       { roleId: dto.roleId },
       { roleName: dto.roleName, remark: dto.remark },
     );
+    return null;
   }
   // 删除角色
   async DeleteRole(roleId: number) {

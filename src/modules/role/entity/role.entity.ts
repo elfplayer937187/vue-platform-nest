@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  Entity,
 } from 'typeorm';
 
 // 其实也可以继承
+@Entity('role')
 export class Role {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;
@@ -14,7 +16,6 @@ export class Role {
   roleId: number;
 
   @Column({
-    type: 'string',
     unique: true,
     length: 50,
     name: 'role_name',
@@ -22,7 +23,7 @@ export class Role {
   })
   roleName: string;
 
-  @Column({ type: 'string', length: 255, comment: '备注', nullable: true })
+  @Column({ length: 255, comment: '备注', nullable: true })
   remark: string;
 
   @CreateDateColumn({ type: 'timestamp' })
