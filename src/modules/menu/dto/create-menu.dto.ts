@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMenuDto {
@@ -17,10 +17,14 @@ export class CreateMenuDto {
   @IsString()
   code: string;
 
-  @ApiProperty({ description: '类型：1=菜单，2=按钮', example: 1 })
-  @IsNotEmpty()
+  @ApiProperty({
+    description: '类型：1=菜单，2=按钮',
+    example: 1,
+    required: false,
+  })
   @IsNumber()
-  type: number;
+  @IsOptional()
+  type?: number;
 
   @ApiProperty({ description: '层级：1/2/3=各级菜单，4=按钮权限', example: 1 })
   @IsNotEmpty()
