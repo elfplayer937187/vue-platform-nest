@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { User } from './Entities/user.entity';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { BusinessException, ErrorCode } from '../../common';
 import { hashPassword } from '../../utils/password.util';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationResponse } from '../../common/dto/pagination-response.dto';
+import { AssignRoleDto } from './dto/assign-user.dto';
+import { Role } from '../role/entity/role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectDataSource() private dataSource: DataSource, //用于处理事务
   ) {}
   // 注册用户
   async createUser(dto: CreateUserDTO) {
@@ -105,5 +108,50 @@ export class UserService {
       .from(User) //从哪个表删除
       .where('Builder.userId IN (...:UserIdList)', { UserIdList })
       .execute();
+  }
+
+  // 查看用户分配角色情况
+  async CheckUserRoles(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { userId },
+      relations: ['roles'],
+    });
+    if (!user) {
+      throw new BusinessException(ErrorCode.USER_NOT_EXIST);
+    }
+    //补全allRoles逻辑
+    const allRoles = await this.dataSource.getRepository(Role).find();
+    return {
+      assignRoles: user.roles || [],
+      allRoles,
+    };
+  }
+
+  // 为用户分配角色
+  async AssignRolesForUser(dto: AssignRoleDto) {
+    // 创建事务
+    await this.dataSource.transaction(async (manager) => {
+      // 删除有关role的
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('user_role')
+        .where('user_id=:userId', { userId: dto.userId })
+        .execute();
+
+      // dto数据处理
+      const values = dto.roleIdList.map((roleId) => ({
+        user_id: dto.userId,
+        role_id: roleId,
+      }));
+      // 添加dto里面应有的roleId
+      await manager
+        .createQueryBuilder()
+        .insert()
+        .into('user_role')
+        .values(values)
+        .execute();
+    });
+    return null;
   }
 }

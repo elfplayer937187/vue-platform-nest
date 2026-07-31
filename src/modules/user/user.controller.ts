@@ -8,6 +8,7 @@ import {
   Query,
   Put,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -19,6 +20,7 @@ import { JwtAuthGuard } from '../auth/auth.guard';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AssignRoleDto } from './dto/assign-user.dto';
 
 @ApiTags('用户管理')
 @Controller('admin/acl/user')
@@ -33,6 +35,15 @@ export class UserController {
     await this.userService.createUser(dto);
   }
 
+  // 查看用户分配 - 放到通用路由前面，避免被 :page/:limit 截胡
+  @ApiOperation({ summary: '查看用户分配的角色id' })
+  @Get('toAssign/:id')
+  async CheckUserRoles(@Param('id', ParseIntPipe) id: number) {
+    console.log(111);
+
+    return await this.userService.CheckUserRoles(id);
+  }
+
   // 获取用户分页列表
   @Get(':page/:limit')
   @ApiOperation({ summary: '用户分页列表' })
@@ -42,8 +53,8 @@ export class UserController {
     description: '用户名模糊搜索',
   })
   async GetUserPagination(
-    @Param('page') page: number,
-    @Param('limit') limit: number,
+    @Param('page', ParseIntPipe) page: number,
+    @Param('limit', ParseIntPipe) limit: number,
     // 不一定要username
     @Query('username') username?: string,
   ) {
@@ -71,5 +82,12 @@ export class UserController {
   async BatchRemoveUser(@Body() deleteIdList: number[]) {
     await this.userService.BatchDeleteUser(deleteIdList);
     return null;
+  }
+
+  // 为用户分配角色
+  @Post('doAssignRole')
+  @ApiOperation({ summary: '为用户分配角色' })
+  async AssignRolesForUser(@Body() dto: AssignRoleDto) {
+    return await this.userService.AssignRolesForUser(dto);
   }
 }

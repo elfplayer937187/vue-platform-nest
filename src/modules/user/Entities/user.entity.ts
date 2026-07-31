@@ -4,7 +4,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
+import { Role } from '../../role/entity/role.entity';
 
 @Entity('user')
 export class User {
@@ -31,4 +34,13 @@ export class User {
 
   @UpdateDateColumn({ name: 'update_time', type: 'timestamp' })
   updateTime: Date;
+
+  // 添加role表连接
+  @ManyToMany(() => Role)
+  @JoinTable({
+    name: 'user_role',
+    joinColumn: { name: 'user_id', referencedColumnName: 'userId' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'roleId' },
+  })
+  roles: Role[];
 }
