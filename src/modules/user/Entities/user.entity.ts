@@ -8,13 +8,23 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Role } from '../../role/entity/role.entity';
+import { bigintTransformer } from '../../../utils/bigint-transformer';
 
 @Entity('user')
 export class User {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    // transformer: bigintTransformer,
+  })
   id: number;
 
-  @Column({ type: 'bigint', name: 'user_id', unique: true, comment: '用户id' })
+  @Column({
+    type: 'bigint',
+    name: 'user_id',
+    unique: true,
+    comment: '用户id',
+    transformer: bigintTransformer,
+  })
   userId: number;
   // 账号
   @Column({ unique: true, length: 50, comment: '用户名' })

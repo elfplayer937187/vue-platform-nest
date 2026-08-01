@@ -31,6 +31,7 @@ export class UserService {
       name: dto.name,
       password: await hashPassword(dto.password),
     });
+    console.log(newUser);
 
     await this.userRepository.save(newUser);
     return true;

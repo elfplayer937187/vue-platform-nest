@@ -23,26 +23,26 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
   @Get()
-  @ApiOperation({ summary: '获取所有菜单' })
+  @ApiOperation({ summary: '获取所有菜单(树形结构)' })
   async GetAllMenu() {
-    await this.menuService.GetAllMenuList();
+    return await this.menuService.GetTreeMenuList();
   }
 
   @Post('save')
   @ApiOperation({ summary: '新增菜单' })
   async CreateMenu(@Body() dto: CreateMenuDto) {
-    await this.menuService.CreateMenu(dto);
+    return await this.menuService.CreateMenu(dto);
   }
 
   @Put('update')
   @ApiOperation({ summary: '更新菜单' })
   async UpdateMenu(@Body() dto: UpdateMenuDto) {
-    await this.menuService.UpdateMenu(dto);
+    return await this.menuService.UpdateMenu(dto);
   }
 
   @Delete('remove/:id')
   @ApiOperation({ summary: '删除菜单' })
   async DeleteMenu(@Param('id', ParseIntPipe) id: number) {
-    await this.menuService.RemoveMenu(id);
+    return await this.menuService.RemoveMenu(id);
   }
 }

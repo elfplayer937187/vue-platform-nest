@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { BusinessException, ErrorCode } from '../../common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
-
+import { BuildTreeMenu } from '../../utils/tree-menu.util';
 @Injectable()
 export class MenuService {
   constructor(
@@ -85,5 +85,15 @@ export class MenuService {
     }
     await this.menuRepository.delete({ menuId });
     return null;
+  }
+
+  // 获取树形菜单列表
+  async GetTreeMenuList() {
+    // 获取平铺菜单
+    const menuList = await this.menuRepository.find({ order: { id: 'ASC' } });
+    if (menuList.length === 0) {
+      return [];
+    }
+    return BuildTreeMenu(menuList);
   }
 }

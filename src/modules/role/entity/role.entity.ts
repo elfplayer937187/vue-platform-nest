@@ -5,14 +5,24 @@ import {
   UpdateDateColumn,
   Entity,
 } from 'typeorm';
+import { bigintTransformer } from '../../../utils/bigint-transformer';
 
 // 其实也可以继承
 @Entity('role')
 export class Role {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    // transformer: bigintTransformer,
+  })
   id: number;
 
-  @Column({ type: 'bigint', unique: true, name: 'role_id', comment: '角色id' })
+  @Column({
+    type: 'bigint',
+    unique: true,
+    name: 'role_id',
+    comment: '角色id',
+    transformer: bigintTransformer,
+  })
   roleId: number;
 
   @Column({

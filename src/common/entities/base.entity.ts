@@ -5,7 +5,9 @@ import {
 } from 'typeorm';
 
 export abstract class BaseEntity {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+  })
   id: number;
 
   @CreateDateColumn({ name: 'create_time', type: 'timestamp' })

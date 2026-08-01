@@ -1,23 +1,37 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
+import { bigintTransformer } from '../../../utils/bigint-transformer';
 
 @Entity('menu')
 export class Menu extends BaseEntity {
-  @Column({ type: 'bigint', unique: true, name: 'menu_id', comment: '菜单id' })
+  @Column({
+    type: 'bigint',
+    unique: true,
+    name: 'menu_id',
+    comment: '菜单id',
+    transformer: bigintTransformer,
+  })
   menuId: number;
 
-  @Column({ length: '30', comment: '菜单名称' })
+  @Column({ length: '100', comment: '菜单名称', charset: 'utf8mb4' })
   name: string;
 
-  @Column({ type: 'bigint', default: 0, comment: '父菜单id,0是根节点' })
+  @Column({
+    type: 'bigint',
+    default: 0,
+    comment: '父菜单id,0是根节点',
+    transformer: bigintTransformer,
+  })
   pid: number;
 
-  @Column({ length: 50, comment: '路由路径权限标识码' })
+  @Column({ length: 50, comment: '路由路径权限标识码', charset: 'utf8mb4' })
   code: string;
 
   @Column({
     length: 100,
+    charset: 'utf8mb4',
     nullable: true,
+    collation: 'utf8mb4_0900_ai_ci',
     name: 'to_code',
     comment: '重定向路径',
   })
