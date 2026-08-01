@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { bigintTransformer } from '../../../utils/bigint-transformer';
+import { Role } from '../../role/entity/role.entity';
 
 @Entity('menu')
 export class Menu extends BaseEntity {
@@ -44,6 +45,9 @@ export class Menu extends BaseEntity {
 
   @Column({ type: 'tinyint', comment: '层级:1/2/3=菜单,4=按钮权限' })
   level: number;
+
+  @ManyToMany(() => Role, (role) => role.menus)
+  roles: Role[];
 
   // 以下字段存数据库，仅运行时使用
   children: Menu[];
