@@ -9,6 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RoleModule } from './modules/role/role.module';
 import { MenuModule } from './modules/menu/menu.module';
+import { ProductModule } from './modules/product/product.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MenuModule } from './modules/menu/menu.module';
     AuthModule,
     RoleModule,
     MenuModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
