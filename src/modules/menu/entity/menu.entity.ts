@@ -1,6 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { bigintTransformer } from '../../../utils/bigint-transformer';
+import { Role } from '../../role/entity/role.entity';
 
 @Entity('menu')
 export class Menu extends BaseEntity {
@@ -24,28 +25,41 @@ export class Menu extends BaseEntity {
   })
   pid: number;
 
-  @Column({ length: 50, comment: '路由路径权限标识码', charset: 'utf8mb4' })
+  @Column({ length: 100, comment: '路由路径权限标识码', charset: 'utf8mb4' })
   code: string;
 
   @Column({
     length: 100,
     charset: 'utf8mb4',
-    nullable: true,
     collation: 'utf8mb4_0900_ai_ci',
     name: 'to_code',
     comment: '重定向路径',
   })
   toCode: string;
-  @Column({ type: 'tinyint', comment: '1是菜单,2是按钮', nullable: true })
+
+  @Column({
+    type: 'int',
+    default: 1,
+    comment: '1是菜单,2是按钮',
+  })
   type: number;
 
-  @Column({ length: 20, nullable: true, comment: '状态' })
+  @Column({ length: 100, comment: '状态' })
   status: string;
 
-  @Column({ type: 'tinyint', comment: '层级:1/2/3=菜单,4=按钮权限' })
+  @Column({ type: 'int', comment: '层级:1/2/3=菜单,4=按钮权限' })
   level: number;
 
-  // 以下字段存数据库，仅运行时使用
-  children: Menu[];
+  @Column({
+    type: 'tinyint',
+    default: 0,
+    comment: '是否选中',
+  })
   select: boolean;
+
+  @ManyToMany(() => Role, (role) => role.menus)
+  roles: Role[];
+
+  // 以下字段不存数据库，仅运行时使用
+  children: Menu[];
 }

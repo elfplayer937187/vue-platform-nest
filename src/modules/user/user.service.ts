@@ -75,9 +75,6 @@ export class UserService {
 
   // 更新用户
   async UpdateUser(dto: UpdateUserDto) {
-    // const user = await this.userRepository.findOne({
-    //   where: { userId: dto.userId },
-    // });
     const user = await this.userRepository.findOneBy({ userId: dto.userId });
     if (!user) {
       throw new BusinessException(ErrorCode.USER_NOT_EXIST);

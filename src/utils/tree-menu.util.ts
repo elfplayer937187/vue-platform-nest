@@ -9,8 +9,6 @@ export function BuildTreeMenu(menuList: Menu[]) {
   menuList.forEach((menu: Menu) => {
     // 找到根节点
     if (menu.pid === 0) {
-      console.log(menu);
-
       // 返回子节点拼装好的根节点
       tree.push(BuildTreeNodeChain(menu, menuList));
     }

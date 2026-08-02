@@ -21,6 +21,8 @@ export class AuthController {
   @ApiBearerAuth('Token')
   @UseGuards(JwtAuthGuard)
   async GetUserInfo(@CurrentUser('userId') userId: number) {
+    console.log(userId);
+
     return await this.authService.getUserInfo(userId);
   }
 

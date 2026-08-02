@@ -7,9 +7,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth.guard';
+import { MenuModule } from '../menu/menu.module';
+import { RoleModule } from '../role/role.module';
 @Module({
   imports: [
     UserModule,
+    MenuModule,
+    RoleModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [], //ConfigModule是全局的无需注册

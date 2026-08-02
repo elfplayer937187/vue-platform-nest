@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Menu } from './entity/menu.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BusinessException, ErrorCode } from '../../common';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { BuildTreeMenu } from '../../utils/tree-menu.util';
+import { AssignPermissionDto } from './dto/assign-permission.dto';
 @Injectable()
 export class MenuService {
   constructor(
     @InjectRepository(Menu) private menuRepository: Repository<Menu>,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
   // 获取所有菜单列表(平铺)
   GetAllMenuList() {
@@ -95,5 +97,66 @@ export class MenuService {
       return [];
     }
     return BuildTreeMenu(menuList);
+  }
+
+  // 根据角色获取菜单
+  async GetMenuFromRole(roleId: number) {
+    // 获取menuList
+    const menuList = await this.menuRepository.find({ order: { id: 'ASC' } });
+    // 没有值返回空
+    if (menuList.length === 0) {
+      return [];
+    }
+    // 有值就根据roleId查找menuId
+    const roleMenuIdList = await this.dataSource
+      .createQueryBuilder()
+      .select('rm.menu_id', 'menuId')
+      .from('role_menu', 'rm')
+      .where('role_id = :roleId', { roleId })
+      .getRawMany();
+
+    // 转换为集合
+    const roleMenuSet = new Set(
+      roleMenuIdList.map((roleMenu: { menuId: string }) =>
+        Number(roleMenu.menuId),
+      ),
+    );
+    // 看看平铺的集合里面的menuId在不在集合里
+    menuList.forEach((menu: Menu) => {
+      menu.select = roleMenuSet.has(menu.menuId);
+    });
+
+    // 返回树形结构
+    return BuildTreeMenu(menuList);
+  }
+
+  // 给角色分配权限
+  async GivePermisssionsForRole(dto: AssignPermissionDto) {
+    await this.dataSource.transaction(async (manager) => {
+      // 给这个角色删除所有权限
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('role_menu', 'rm')
+        .where('role_id = :roleId', { roleId: dto.roleId })
+        .execute();
+      // 如果permissionId列表存在就格式转换并且插入
+      if (dto.permissionId && dto.permissionId.length > 0) {
+        // 格式化数据
+        const insertData = dto.permissionId.map((id: number) => ({
+          role_id: dto.roleId,
+          menu_id: id,
+        }));
+        await manager
+          .createQueryBuilder()
+          .insert()
+          .into('role_menu')
+          .values(insertData)
+          .execute();
+      } else {
+        throw new BusinessException(ErrorCode.INVALID_PARAM);
+      }
+    });
+    return null;
   }
 }

@@ -12,7 +12,7 @@ export interface JwtPayload {
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(configService: ConfigService) {
     super({
-      // ⚠️ 重点：从 Token 头读取（不是标准的 Authorization: Bearer）
+      //  重点：从 Token 头读取（不是标准的 Authorization: Bearer）
       jwtFromRequest: ExtractJwt.fromHeader('token'),
       ignoreExpiration: false,
       secretOrKey: configService.getOrThrow<string>('jwt.secret'),

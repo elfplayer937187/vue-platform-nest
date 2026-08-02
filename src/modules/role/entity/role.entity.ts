@@ -4,8 +4,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Entity,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { bigintTransformer } from '../../../utils/bigint-transformer';
+import { Menu } from '../../menu/entity/menu.entity';
 
 // 其实也可以继承
 @Entity('role')
@@ -41,4 +44,12 @@ export class Role {
 
   @UpdateDateColumn({ type: 'timestamp' })
   updateTime: Date;
+
+  @ManyToMany(() => Menu, (menu) => menu.roles)
+  @JoinTable({
+    name: 'role_menu',
+    joinColumn: { name: 'role_id', referencedColumnName: 'roleId' },
+    inverseJoinColumn: { name: 'menu_id', referencedColumnName: 'menuId' },
+  })
+  menus: Menu[];
 }
