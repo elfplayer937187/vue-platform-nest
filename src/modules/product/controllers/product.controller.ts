@@ -4,6 +4,8 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
+  Get,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -13,16 +15,19 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import dayjs from 'dayjs';
-import { JwtAuthGuard } from '../auth/auth.guard';
+import { JwtAuthGuard } from '../../auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join, extname } from 'path';
 import * as fs from 'fs';
+import { CategoryService } from '../services/product.service';
 @ApiTags('商品管理')
 @ApiBearerAuth('Token')
 @UseGuards(JwtAuthGuard)
 @Controller('admin/product')
 export class ProductController {
+  constructor(private readonly categoryService: CategoryService) {}
+  // 处理文件上传接口
   @Post('fileUpload')
   @ApiOperation({ summary: '文件上传' })
   @ApiConsumes('multipart/form-data') //告诉swagger显示文件选择器
@@ -73,7 +78,26 @@ export class ProductController {
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
 
-    const url = '/api/' + file.path.replace('/\\/g', '/');
+    const url = '/api/' + file.path.replace(/\\/g, '/');
     return url;
+  }
+
+  // 获取category1接口
+  @Get('category1')
+  @ApiOperation({ summary: '获取一级分类接口' })
+  async getCategory1() {
+    return await this.categoryService.GetCategory1();
+  }
+
+  @Get('category2/:id')
+  @ApiOperation({ summary: '获取二级分类接口' })
+  async getCategory2(@Param('id') category1Id: number) {
+    return await this.categoryService.GetCategory2(category1Id);
+  }
+
+  @Get('category3/:id')
+  @ApiOperation({ summary: '获取三级分类接口' })
+  async getCategory3(@Param('id') category2Id: number) {
+    return await this.categoryService.GetCategory3(category2Id);
   }
 }
