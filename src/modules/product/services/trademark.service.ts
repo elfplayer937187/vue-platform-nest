@@ -17,8 +17,6 @@ export class TradeMarkService {
   async getTrademarkPaginationList(page: number, limit: number) {
     const [records, total] = await this.tradeMarkRepository
       .createQueryBuilder()
-      .select()
-      .from('trademark', 't')
       .skip((page - 1) * limit)
       .take(limit)
       .orderBy('id', 'ASC')
