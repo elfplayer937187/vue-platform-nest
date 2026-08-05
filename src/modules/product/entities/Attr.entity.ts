@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { bigintTransformer } from '../../../utils/bigint-transformer';
 import { AttrValue } from './Attr-value.entity';
+
 @Entity('attr')
 export class Attr extends BaseEntity {
   @Column({
@@ -24,6 +25,7 @@ export class Attr extends BaseEntity {
 
   // 一对多：一个 Attr 有多个 AttrValue
   // 注意：仅作运行时数据容器，不启用级联保存以避免复杂性
-  @OneToMany(() => AttrValue, (attrValue) => attrValue.attr)
+  // 这样写避免循环依赖
+  @OneToMany('attr_value', 'attr')
   attrValueList: AttrValue[];
 }

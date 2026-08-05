@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToMany } from 'typeorm';
 import { BaseEntity } from '../../../common/entities/base.entity';
 import { bigintTransformer } from '../../../utils/bigint-transformer';
-import { Role } from '../../role/entity/role.entity';
+import type { Role } from '../../role/entity/role.entity';
 
 @Entity('menu')
 export class Menu extends BaseEntity {
@@ -57,7 +57,7 @@ export class Menu extends BaseEntity {
   })
   select: boolean;
 
-  @ManyToMany(() => Role, (role) => role.menus)
+  @ManyToMany('role', 'menus')
   roles: Role[];
 
   // 以下字段不存数据库，仅运行时使用

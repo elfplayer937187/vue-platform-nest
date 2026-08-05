@@ -10,6 +10,13 @@ import { Trademark } from './entities/trademark.entity';
 import { TrademarkController } from './controllers/trademark.controller';
 import { Attr } from './entities/Attr.entity';
 import { AttrValue } from './entities/Attr-value.entity';
+import { AttrController } from './controllers/attr.controller';
+import { AttrService } from './services/attr.service';
+import { Spu } from './entities/spu.entity';
+import { SpuSaleAttr } from './entities/spu-sale-attr.entity';
+import { saleAttr } from './entities/sale-attr.entity';
+import { saleAttrValue } from './entities/sale-attr-value.entity';
+import { spuImageList } from './entities/spu-image-list.entity';
 
 @Module({
   imports: [
@@ -20,9 +27,15 @@ import { AttrValue } from './entities/Attr-value.entity';
       Trademark,
       Attr,
       AttrValue,
+      Spu,
+      SpuSaleAttr,
+      saleAttr,
+      saleAttrValue,
+      spuImageList,
     ]),
   ],
-  controllers: [ProductController, TrademarkController],
-  providers: [CategoryService, TradeMarkService],
+  controllers: [ProductController, TrademarkController, AttrController],
+  providers: [CategoryService, TradeMarkService, AttrService],
+  exports: [TypeOrmModule],
 })
 export class ProductModule {}
