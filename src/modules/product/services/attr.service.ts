@@ -45,19 +45,18 @@ export class AttrService {
         .insert()
         .into('attr')
         .values({
-          attr_id: attrId,
-          attr_name: dto.attrName,
-          category_id: dto.categoryId,
-          category_level: dto.categoryLevel,
+          attrId: attrId,
+          attrName: dto.attrName,
+          categoryId: dto.categoryId,
+          categoryLevel: dto.categoryLevel,
         })
         .execute();
 
       if (dto.attrValueList && dto.attrValueList.length > 0) {
         const values = dto.attrValueList.map((attrValue) => ({
-          attr_value_id:
-            new Date().getTime() + Math.floor(Math.random() * 1000),
-          value_name: attrValue.valueName || '未知姓名',
-          attr_id: attrValue.attrValueId,
+          attrValueId: new Date().getTime() + Math.floor(Math.random() * 1000),
+          valueName: attrValue.valueName || '未知姓名',
+          attrId: attrValue.attrValueId,
         }));
         await manager
           .createQueryBuilder()
@@ -78,9 +77,9 @@ export class AttrService {
         .createQueryBuilder()
         .update('attr')
         .set({
-          attr_name: dto.attrName,
-          category_id: dto.categoryId,
-          category_level: dto.categoryLevel,
+          attrName: dto.attrName,
+          categoryId: dto.categoryId,
+          categoryLevel: dto.categoryLevel,
         })
         .where('attr.attr_id=:id', { id: dto.id })
         .execute();
@@ -93,7 +92,7 @@ export class AttrService {
           await manager
             .createQueryBuilder()
             .update('attr_value')
-            .set({ value_name: attrValue.valueName })
+            .set({ valueName: attrValue.valueName })
             .where('attr_id=:id', { id: attrValue.attrValueId })
             .execute();
         } else {
@@ -104,9 +103,9 @@ export class AttrService {
             .insert()
             .into('attr_value')
             .values({
-              attr_value_id: newId,
-              value_name: attrValue.valueName,
-              attr_id: dto.id,
+              attrValueId: newId,
+              valueName: attrValue.valueName,
+              attrId: dto.id,
             })
             .execute();
         }

@@ -22,4 +22,6 @@ export class SpuSaleAttr extends BaseEntity {
 
   @Column({ type: 'bigint', name: 'spu_id', comment: '所属SPU ID' })
   spuId: number;
+
+  spuSaleAttrList?: any[];
 }
