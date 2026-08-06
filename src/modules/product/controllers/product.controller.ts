@@ -76,8 +76,6 @@ export class ProductController {
     }),
   )
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file);
-
     const url = '/api/' + file.path.replace(/\\/g, '/');
     return url;
   }

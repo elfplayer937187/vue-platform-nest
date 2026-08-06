@@ -77,5 +77,5 @@ export class SaveSpuDto {
 
   @ApiProperty({ description: '销售属性列表', type: [SpuSaleAttrItemDto] })
   @IsArray()
-  spuSaleAttrList: SpuSaleAttrValueItemDto[]; //存储销售属性
+  spuSaleAttrList: SpuSaleAttrItemDto[]; //存储销售属性
 }

@@ -17,8 +17,12 @@ export class Spu extends BaseEntity {
     type: 'varchar',
     length: 100,
     comment: 'spu名称',
+    name: 'spu_name',
   })
   spuName: string;
+
+  @Column({ type: 'bigint', name: 'category3_id', comment: '三级分类ID' })
+  category3Id: number;
 
   @Column({
     type: 'text',
