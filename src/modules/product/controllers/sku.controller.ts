@@ -1,7 +1,8 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SkuService } from '../services/sku.service';
 import { JwtAuthGuard } from '../../auth/auth.guard';
+import { SaveSkuDto } from '../dto/save-sku.dto';
 
 @ApiTags('商品SKU')
 @ApiBearerAuth('Token')
@@ -32,5 +33,11 @@ export class SkuController {
   @ApiOperation({ summary: '下架 SKU' })
   async cancelSale(@Param('id') id: number) {
     return this.skuService.CancelSaleSku(id);
+  }
+
+  @Post('saveSkuInfo')
+  @ApiOperation({ summary: '新增 SKU' })
+  async saveSkuInfo(@Body() dto: SaveSkuDto) {
+    return this.skuService.SaveSku(dto);
   }
 }

@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Sku } from '../entities/sku.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { paginationReturn } from '../../../common/types/paginaton.return';
 import { BusinessException, ErrorCode } from '../../../common';
+import { SaveSkuDto } from '../dto/save-sku.dto';
+import { SkuImage } from '../entities/sku-image.entity';
+import { SkuAttrValue } from '../entities/sku-attr-value.entity';
+import { SkuSaleAttrValue } from '../entities/sku-sale-attr-value.entity';
 
 @Injectable()
 export class SkuService {
-  constructor(@InjectRepository(Sku) private skuRepository: Repository<Sku>) {}
+  constructor(
+    @InjectRepository(Sku) private skuRepository: Repository<Sku>,
+    @InjectDataSource() private dataSource: DataSource,
+  ) {}
   // 获取sku分页列表
   async getSkuPagination(page: number, limit: number) {
     const [records, total] = await this.skuRepository
@@ -47,6 +54,123 @@ export class SkuService {
       throw new BusinessException(ErrorCode.INVALID_PARAM);
     }
     await this.skuRepository.update({ skuId }, { isSale: 0 });
+    return null;
+  }
+
+  // 保存sku
+  async SaveSku(dto: SaveSkuDto) {
+    const skuId = Date.now() + Math.floor(Math.random() * 10000);
+    await this.dataSource.transaction(async (manager) => {
+      // 插入基础sku
+      await manager
+        .createQueryBuilder()
+        .insert()
+        .into(Sku)
+        .values({
+          skuId,
+          spuId: dto.spuId,
+          category3Id: dto.category3Id,
+          tmId: dto.tmId,
+          skuName: dto.skuName,
+          weight: dto.weight,
+          price: dto.price,
+          skuDesc: dto.skuDesc,
+          skuDefaultImg: dto.skuDefaultImg,
+          isSale: 0,
+        })
+        .execute();
+
+      //插入skuImage
+      if (dto.skuImageList && dto.skuImageList.length > 0) {
+        const Images: SkuImage[] = dto.skuImageList.map((skuImage) => ({
+          imageId: Date.now() + Math.floor(Math.random() * 10000),
+          skuId,
+          imageName: skuImage.imageName,
+          imageUrl: skuImage.imageUrl,
+          spuImageId: skuImage.spuImageId,
+          isDefault: skuImage.isDefault,
+        }));
+        await manager
+          .createQueryBuilder()
+          .insert()
+          .into(SkuImage)
+          .values(Images)
+          .execute();
+      }
+
+      // 插入skuAttrValue
+      if (dto.skuAttrValueList && dto.skuAttrValueList.length > 0) {
+        // 根据提供的id查询名称
+        for (const skuAttrValue of dto.skuAttrValueList) {
+          const attrName: { name: string } | undefined = await manager
+            .createQueryBuilder()
+            .select('attr_name', 'name')
+            .from('attr', 'attr')
+            .where('attr_id=:attrId', { attrId: skuAttrValue.attrId })
+            .getRawOne();
+          const valueName: { name: string } | undefined = await manager
+            .createQueryBuilder()
+            .select('value_name', 'name')
+            .from('attr_value', 'av')
+            .where('av.attr_value_id=:valueId', {
+              valueId: skuAttrValue.valueId,
+            })
+            .getRawOne();
+
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into(SkuAttrValue)
+            .values({
+              skuAttrValueId: Date.now() + Math.floor(Math.random() * 10000),
+              attrId: skuAttrValue.attrId,
+              attrName: attrName?.name,
+              valueId: skuAttrValue.valueId,
+              valueName: valueName?.name,
+            })
+            .execute();
+        }
+      }
+
+      // 插入销售属性
+      if (dto.skuSaleAttrValueList && dto.skuSaleAttrValueList.length > 0) {
+        for (const skuSaleAttrValue of dto.skuSaleAttrValueList) {
+          // 反查sale_attr_name<-销售属性ID（spu_sale_attr表）
+          const saleAttrName: { name: string } | undefined = await manager
+            .createQueryBuilder()
+            .select('sale_attr_name', 'name')
+            .from('spu_sale_attr', 'ssa')
+            .where('ssa.spu_sale_attr_id=:id', {
+              id: skuSaleAttrValue.saleAttrId,
+            })
+            .getRawOne();
+
+          const saleAttrValueName: { name: string } | undefined = await manager
+            .createQueryBuilder()
+            .select('sale_attr_value_name', 'name')
+            .from('sale_attr_value', 'sav')
+            .where('sav.sale_attr_value_id=:id', {
+              id: skuSaleAttrValue.saleAttrValueId,
+            })
+            .getRawOne();
+
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into(SkuSaleAttrValue)
+            .values({
+              skuSaleAttrValueId:
+                Date.now() + Math.floor(Math.random() * 10000),
+              saleAttrId: skuSaleAttrValue.saleAttrId,
+              saleAttrName: saleAttrName?.name,
+              saleAttrValueId: skuSaleAttrValue.saleAttrValueId,
+              saleAttrValueName: saleAttrValueName?.name,
+              skuId,
+            })
+            .execute();
+        }
+      }
+    });
     return null;
   }
 }
