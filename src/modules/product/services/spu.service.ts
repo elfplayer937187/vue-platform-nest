@@ -6,6 +6,8 @@ import { SaveSpuDto } from '../dto/save-spu-dto';
 import { spuImageList } from '../entities/spu-image-list.entity';
 import { SpuSaleAttr } from '../entities/spu-sale-attr.entity';
 import { saleAttrValue } from '../entities/sale-attr-value.entity';
+import { paginationReturn } from '../../../common/types/paginaton.return';
+import { Spu } from '../entities/spu.entity';
 @Injectable()
 export class SpuService {
   constructor(
@@ -131,14 +133,15 @@ export class SpuService {
             countResult.spuCount,
           ]);
       });
-    return {
-      records,
-      total,
+    const spuInfo: paginationReturn<Spu> = {
+      records: records as Spu[],
+      total: total as number,
       size: limit,
       current: page,
       searchCount: true,
       pages: Math.ceil((total as number) / limit),
     };
+    return spuInfo;
   }
 
   // 获取图片列表

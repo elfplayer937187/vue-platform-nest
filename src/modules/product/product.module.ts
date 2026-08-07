@@ -19,6 +19,9 @@ import { saleAttrValue } from './entities/sale-attr-value.entity';
 import { spuImageList } from './entities/spu-image-list.entity';
 import { SpuController } from './controllers/spu.controller';
 import { SpuService } from './services/spu.service';
+import { SkuController } from './controllers/sku.controller';
+import { SkuService } from './services/sku.service';
+import { Sku } from './entities/sku.entity';
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { SpuService } from './services/spu.service';
       saleAttr,
       saleAttrValue,
       spuImageList,
+      Sku,
     ]),
   ],
   controllers: [
@@ -41,8 +45,15 @@ import { SpuService } from './services/spu.service';
     TrademarkController,
     AttrController,
     SpuController,
+    SkuController,
   ],
-  providers: [CategoryService, TradeMarkService, AttrService, SpuService],
+  providers: [
+    CategoryService,
+    TradeMarkService,
+    AttrService,
+    SpuService,
+    SkuService,
+  ],
   exports: [TypeOrmModule],
 })
 export class ProductModule {}

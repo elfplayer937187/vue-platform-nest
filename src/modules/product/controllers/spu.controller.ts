@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  Put,
   Delete,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -44,7 +45,7 @@ export class SpuController {
     return this.spuService.getSpuAttrList(id);
   }
 
-  @Post('updateSpuInfo')
+  @Put('updateSpuInfo')
   @ApiOperation({ summary: '更新 SPU' })
   async updateSpuInfo(@Body() dto: SaveSpuDto) {
     return this.spuService.updateSpu(dto);
