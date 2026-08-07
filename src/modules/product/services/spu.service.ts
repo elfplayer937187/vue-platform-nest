@@ -5,7 +5,7 @@ import { saleAttr } from '../entities/sale-attr.entity';
 import { SaveSpuDto } from '../dto/save-spu-dto';
 import { spuImageList } from '../entities/spu-image-list.entity';
 import { SpuSaleAttr } from '../entities/spu-sale-attr.entity';
-
+import { saleAttrValue } from '../entities/sale-attr-value.entity';
 @Injectable()
 export class SpuService {
   constructor(
@@ -104,7 +104,7 @@ export class SpuService {
     return null;
   }
 
-  // 获取spu列表
+  // 获取spu分页列表
   async GetSpuPagination(category3Id: number, page: number, limit: number) {
     const [records, total] = await this.dataSource
       .createQueryBuilder()
@@ -180,5 +180,138 @@ export class SpuService {
       spuAttr.spuSaleAttrList = spuAttrValueList;
     }
     return spuAttrList;
+  }
+
+  // 更新Spu
+  async updateSpu(dto: SaveSpuDto) {
+    await this.dataSource.transaction(async (manager) => {
+      // 更新spu主表元素
+      await manager
+        .createQueryBuilder()
+        .update('spu')
+        .set({
+          spu_name: dto.spuName,
+          category3_id: dto.category3Id,
+          description: dto.description,
+          tm_id: dto.tmId,
+        })
+        .where('spu_id= :spuId', { spuId: dto.id })
+        .execute();
+
+      // 更新spuImageList
+      // 先删再增,删除和spu有关联的图片列表
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('spu_image_list')
+        .where('spu_id=:spuId', { spuId: dto.id })
+        .execute();
+
+      // 新增spuimage
+      if (dto.spuImageList && dto.spuImageList.length > 0) {
+        for (const spuImage of dto.spuImageList) {
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into('spu_image_list')
+            .values({
+              image_id: Date.now() + Math.floor(Math.random() * 10000),
+              image_name: spuImage.imageName,
+              image_url: spuImage.imageUrl,
+              spu_id: dto.id,
+            })
+            .execute();
+        }
+      }
+
+      // 销售属性
+      // 先删除再增加
+      //由于是平铺数据库表所以直接根据spuId删
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('spu_sale_attr')
+        .where('spu_id=:spuId', { spuId: dto.id })
+        .execute();
+
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('sale_attr_value')
+        .where('spu_id=:spuId', { spuId: dto.id })
+        .execute();
+
+      // 插入新的属性
+      if (dto.spuSaleAttrList && dto.spuSaleAttrList.length > 0) {
+        const newSpuSaleAttrList: SpuSaleAttr[] = [];
+        const newSaleAttrValueList: saleAttrValue[] = [];
+        for (const spuSaleAttr of dto.spuSaleAttrList) {
+          newSpuSaleAttrList.push({
+            spuId: dto.id!,
+            saleAttrName: spuSaleAttr.SaleAttrName,
+            baseSaleAttrId: spuSaleAttr.BaseSaleAttrId,
+            spuSaleAttrId: Date.now() + Math.floor(Math.random() * 10000),
+          });
+          for (const saleAttrValue of spuSaleAttr.spuSaleAttrValueList) {
+            newSaleAttrValueList.push({
+              spuId: dto.id!,
+              saleAttrValueId: Date.now() + Math.floor(Math.random() * 10000),
+              saleAttrValueName: saleAttrValue.saleAttrValueName,
+              saleAttrId: saleAttrValue.baseSaleAttrId,
+            });
+          }
+        }
+        if (newSpuSaleAttrList.length > 0) {
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into(SpuSaleAttr)
+            .values(newSpuSaleAttrList)
+            .execute();
+        }
+        if (newSaleAttrValueList.length > 0) {
+          await manager
+            .createQueryBuilder()
+            .insert()
+            .into(saleAttrValue)
+            .values(newSaleAttrValueList)
+            .execute();
+        }
+      }
+    });
+    return null;
+  }
+
+  // 删除spu
+  async removeSpu(spuId: number) {
+    // 删除4个表,spu,saleAttrValue,spuSaleAttr,spuimagelist
+    // 先删除子表后删除父表
+    await this.dataSource.transaction(async (manager) => {
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('sale_attr_value')
+        .where('spu_id=:spuId', { spuId })
+        .execute();
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('spu_sale_attr')
+        .where('spu_id=:spuId', { spuId })
+        .execute();
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('spu_image_list')
+        .where('spu_id=:spuId', { spuId })
+        .execute();
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('spu')
+        .where('spu_id=:spuId', { spuId })
+        .execute();
+    });
+    return null;
   }
 }

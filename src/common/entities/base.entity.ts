@@ -8,11 +8,11 @@ export abstract class BaseEntity {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
   })
-  id: number;
+  id?: number;
 
   @CreateDateColumn({ name: 'create_time', type: 'timestamp' })
-  createTime: Date;
+  createTime?: Date;
 
   @UpdateDateColumn({ name: 'update_time', type: 'timestamp' })
-  updateTime: Date;
+  updateTime?: Date;
 }

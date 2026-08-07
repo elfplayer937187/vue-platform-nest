@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: root123456
       MYSQL_DATABASE: nest_guigu
     ports:
-      - '3306:3306'
+      - '3307:3306'
     healthcheck:
       test:
         [
