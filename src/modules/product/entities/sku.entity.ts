@@ -18,8 +18,16 @@ export class Sku extends BaseEntity {
   @Column({ name: 'sku_name', length: 200, comment: 'SKU 名称' })
   skuName: string;
 
-  @Column({ type: 'bigint', comment: '重量（克）' })
-  weight: number;
+  @Column({
+    type: 'varchar',
+    length: 255,
+    comment: '重量（克）',
+    transformer: {
+      to: (value: string | number): string => String(value ?? ''),
+      from: (value: string): string => value,
+    },
+  })
+  weight: string;
 
   @Column({ type: 'bigint', comment: '价格（分）' })
   price: number;

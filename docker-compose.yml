@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: nest_guigu
     ports:
       - '3307:3306'
+    volumes:
+      - nest_guigu_data:/var/lib/mysql
     healthcheck:
       test:
         [
@@ -22,3 +24,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+volumes:
+  nest_guigu_data:

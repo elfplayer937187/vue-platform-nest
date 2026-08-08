@@ -39,6 +39,9 @@ export class User {
   @Column({ length: 255, default: '', comment: '用户头像地址' })
   avatar: string;
 
+  @Column({ length: 20, default: '', comment: '手机号' })
+  phone: string;
+
   @CreateDateColumn({ name: 'create_time', type: 'timestamp' })
   createTime: Date;
 

@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 // SKU 图片
 export class SkuImageItemDto {
@@ -62,8 +63,9 @@ export class SaveSkuDto {
   skuName: string;
 
   @ApiProperty({ description: '重量（克）' })
-  @IsNumber()
-  weight: number;
+  @IsNotEmpty({ message: '重量不能为空' })
+  @Transform(({ value }) => String(value))
+  weight: string;
 
   @ApiProperty({ description: '价格（分）' })
   @IsNumber()

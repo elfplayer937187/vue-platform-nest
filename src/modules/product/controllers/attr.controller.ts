@@ -12,7 +12,7 @@ import { JwtAuthGuard } from '../../auth/auth.guard';
 import { AttrService } from '../services/attr.service';
 import { SaveAttrDto } from '../dto/save-attr.dto';
 
-@Controller('admin/pruduct')
+@Controller('admin/product')
 @ApiTags('商品属性')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth('Token')
