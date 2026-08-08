@@ -116,7 +116,7 @@ export class SpuService {
       .addSelect('spu.category3_id', 'category3Id')
       .addSelect('spu.tm_id', 'tmId')
       .from('spu', 'spu')
-      .where('category3_id =category3Id', { category3Id })
+      .where('category3_id = :category3Id', { category3Id })
       .skip((page - 1) * limit)
       .take(limit)
       .orderBy('id', 'ASC')
@@ -146,7 +146,7 @@ export class SpuService {
 
   // 获取图片列表
   async GetImages(spuId: number) {
-    await this.spuImageRepository
+    return this.spuImageRepository
       .createQueryBuilder('spu')
       .where('spu.spu_id = :spuId', { spuId })
       .orderBy('id', 'ASC')
@@ -162,7 +162,7 @@ export class SpuService {
       .addSelect('sale_attr_name', 'saleAttrName')
       .addSelect('spu_id', 'spuId')
       .from('spu_sale_attr', 'spuSaleAttr')
-      .where('spuSaleAttr.spuId = :spuId', { spuId })
+      .where('spuSaleAttr.spu_id = :spuId', { spuId })
       .orderBy({ id: 'ASC' })
       .getRawMany();
     // 获取每一个spu
@@ -175,10 +175,10 @@ export class SpuService {
         .addSelect('sale_attr_id', 'saleAttrId')
         .addSelect('spu_id', 'spuId')
         .from('sale_attr_value', 'saleAttrValue')
-        .where('saleAttrValue.saleAttrId = :saleAttrId', {
+        .where('saleAttrValue.sale_attr_id = :saleAttrId', {
           saleAttrId: spuAttr.baseSaleAttrId,
         })
-        .andWhere('saleAttrValue.spuId = :spuId', { spuId })
+        .andWhere('saleAttrValue.spu_id = :spuId', { spuId })
         .getRawMany();
       spuAttr.spuSaleAttrList = spuAttrValueList;
     }

@@ -1,4 +1,12 @@
-import { Controller, Get, Param, UseGuards, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UseGuards,
+  Post,
+  Body,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SkuService } from '../services/sku.service';
 import { JwtAuthGuard } from '../../auth/auth.guard';
@@ -39,5 +47,17 @@ export class SkuController {
   @ApiOperation({ summary: '新增 SKU' })
   async saveSkuInfo(@Body() dto: SaveSkuDto) {
     return this.skuService.SaveSku(dto);
+  }
+
+  @Get('getSkuInfo/:id')
+  @ApiOperation({ summary: '获取 SKU 详情' })
+  async getSkuInfo(@Param('id') id: number) {
+    return this.skuService.getSkuInfo(id);
+  }
+
+  @Delete('deleteSku/:id')
+  @ApiOperation({ summary: '删除 SKU' })
+  async deleteSku(@Param('id') id: number) {
+    return this.skuService.deleteSku(id);
   }
 }

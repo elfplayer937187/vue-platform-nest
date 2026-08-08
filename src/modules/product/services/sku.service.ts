@@ -173,4 +173,92 @@ export class SkuService {
     });
     return null;
   }
+
+  // 获取sku详情信息
+  async getSkuInfo(skuId: number) {
+    // 查看sku是否存在
+    const sku = await this.skuRepository.findOne({ where: { skuId } });
+    if (!sku) {
+      throw new BusinessException(ErrorCode.NO_SKU);
+    }
+    // 如果存在,查询sku对应的image,attrvalue,saleattrvalue
+    const skuImageList = await this.dataSource
+      .createQueryBuilder()
+      .select([
+        'image_id as imageId',
+        'sku_id as skuId',
+        'image_name as imageName',
+        'image_url as imageUrl',
+        'spu_image_id as spuImageId',
+        'is_default as isDefault',
+      ])
+      .from('sku_image', 'si')
+      .where('si.sku_id = :skuId', { skuId })
+      .getRawMany();
+
+    const skuAttrValueList = await this.dataSource
+      .createQueryBuilder()
+      .select([
+        'sku_attr_value_id as skuAttrValueId',
+        'attr_id as attrId',
+        'attr_name as attrName',
+        'value_id as valueId',
+        'value_name as valueName',
+        'sku_id as skuId',
+      ])
+      .from('sku_attr_value', 'sav')
+      .where('sav.sku_id = :skuId', { skuId })
+      .getRawMany();
+
+    const skuSaleAttrValueList = await this.dataSource
+      .createQueryBuilder()
+      .select([
+        'sku_sale_attr_value_id as skuSaleAttrValueId',
+        'sale_attr_id as saleAttrId',
+        'sale_attr_name as saleAttrName',
+        'sale_attr_value_id as saleAttrValueId',
+        'sale_attr_value_name as saleAttrValueName',
+        'sku_id as skuId',
+      ])
+      .from('sku_sale_attr_value', 'ssav')
+      .where('ssav.sku_id = :skuId', { skuId })
+      .getRawMany();
+
+    return { ...sku, skuImageList, skuAttrValueList, skuSaleAttrValueList };
+  }
+
+  // 删除sku
+  async deleteSku(skuId: number) {
+    // 使用事务级联删除
+    await this.dataSource.transaction(async (manager) => {
+      // 删除sku_sale_attr_value表
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('sku_sale_attr_value', 'ssav')
+        .where('ssav.sku_id=:skuId', { skuId })
+        .execute();
+
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('sku_attr_value')
+        .where('sku_id = :skuId', { skuId })
+        .execute();
+
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('sku_image')
+        .where('sku_id = :skuId', { skuId })
+        .execute();
+
+      await manager
+        .createQueryBuilder()
+        .delete()
+        .from('sku')
+        .where('sku_id = :skuId', { skuId })
+        .execute();
+    });
+  }
 }

@@ -9,6 +9,7 @@ export enum ErrorCode {
   NEED_LOGIN = 207,
   MENU_NODE_EXIST = 208,
   NO_ROUTE = 209,
+  NO_SKU = 210,
 }
 // 错误信息
 export const ErrorMessages: Record<number, string> = {
@@ -22,4 +23,5 @@ export const ErrorMessages: Record<number, string> = {
   [ErrorCode.NEED_LOGIN]: '需要登录',
   [ErrorCode.MENU_NODE_EXIST]: '该节点下有子节点，不可以删除',
   [ErrorCode.NO_ROUTE]: '请求路径不存在',
+  [ErrorCode.NO_SKU]: '该sku不存在',
 };

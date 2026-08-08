@@ -22,6 +22,9 @@ import { SpuService } from './services/spu.service';
 import { SkuController } from './controllers/sku.controller';
 import { SkuService } from './services/sku.service';
 import { Sku } from './entities/sku.entity';
+import { SkuImage } from './entities/sku-image.entity';
+import { SkuAttrValue } from './entities/sku-attr-value.entity';
+import { SkuSaleAttrValue } from './entities/sku-sale-attr-value.entity';
 
 @Module({
   imports: [
@@ -38,6 +41,9 @@ import { Sku } from './entities/sku.entity';
       saleAttrValue,
       spuImageList,
       Sku,
+      SkuImage,
+      SkuAttrValue,
+      SkuSaleAttrValue,
     ]),
   ],
   controllers: [
