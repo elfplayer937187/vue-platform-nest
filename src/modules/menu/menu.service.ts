@@ -133,6 +133,20 @@ export class MenuService {
   // 给角色分配权限
   async GivePermisssionsForRole(dto: AssignPermissionDto) {
     await this.dataSource.transaction(async (manager) => {
+      // 如果是空串[0],则删除所有权限并返回
+      if (
+        dto.permissionId &&
+        dto.permissionId.length === 1 &&
+        dto.permissionId[0] === 0
+      ) {
+        await manager
+          .createQueryBuilder()
+          .delete()
+          .from('role_menu')
+          .where('role_id=:roleId', { roleId: dto.roleId })
+          .execute();
+        return null;
+      }
       // 给这个角色删除所有权限
       await manager
         .createQueryBuilder()
@@ -154,6 +168,9 @@ export class MenuService {
           .values(insertData)
           .execute();
       } else {
+        // dto里面是个空值
+        // 删掉所有权限,roleId->menuId
+        // 检验是否为空串
         throw new BusinessException(ErrorCode.INVALID_PARAM);
       }
     });

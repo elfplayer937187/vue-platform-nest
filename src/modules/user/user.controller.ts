@@ -21,6 +21,7 @@ import { UserService } from './user.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AssignRoleDto } from './dto/assign-user.dto';
+import { BatchRemoveDto } from './dto/batch-remove.dto';
 
 @ApiTags('用户管理')
 @Controller('admin/acl/user')
@@ -79,8 +80,8 @@ export class UserController {
   // 批量删除用户
   @Delete('batchRemove')
   @ApiOperation({ summary: '批量删除用户' })
-  async BatchRemoveUser(@Body() deleteIdList: number[]) {
-    await this.userService.BatchDeleteUser(deleteIdList);
+  async BatchRemoveUser(@Body() dto: BatchRemoveDto) {
+    await this.userService.BatchDeleteUser(dto.idList);
     return null;
   }
 

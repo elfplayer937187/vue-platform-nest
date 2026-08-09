@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class AssignPermissionDto {
   @ApiProperty({ description: '角色id' })
@@ -10,8 +10,6 @@ export class AssignPermissionDto {
   roleId: number;
 
   @ApiProperty({ description: '菜单的id', type: [Number], example: [1, 2, 3] })
-  @IsNumber({}, { each: true })
-  @ArrayNotEmpty({ message: '数组不能为空' })
   @IsArray({ message: '必须是数组' })
   @Transform(({ value }): unknown => {
     // 如果是string类型

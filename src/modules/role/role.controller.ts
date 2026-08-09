@@ -8,6 +8,7 @@ import {
   UseGuards,
   Put,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -61,7 +62,7 @@ export class RoleController {
   // 删除角色
   @ApiOperation({ summary: '删除角色' })
   @Delete('remove/:id')
-  async RemoveRole(@Param('id') roleId: number) {
+  async RemoveRole(@Param('id', ParseIntPipe) roleId: number) {
     return await this.roleService.DeleteRole(roleId);
   }
 }

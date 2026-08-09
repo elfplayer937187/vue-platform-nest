@@ -56,4 +56,7 @@ export class User {
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'roleId' },
   })
   roles: Role[];
+
+  // 前端需要的roleName
+  roleName?: string;
 }

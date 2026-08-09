@@ -56,14 +56,36 @@ export class UserService {
   ): Promise<PaginationResponse<User>> {
     const query = this.userRepository.createQueryBuilder('query');
     if (username) {
-      query.where('query.username LIKE :username', { username });
+      // 应当是数据库里的值是否匹配我输入的值
+      query.where('query.username LIKE :username', {
+        username: `%${username}%`,
+      });
     }
+
     const [records, total] = await query
       .skip((page - 1) * limit)
       .take(limit)
       .orderBy('query.id', 'ASC')
       .getManyAndCount();
+    // 根据用户id获取相应角色,user->user_role->role
+    if (records && records.length > 0) {
+      for (const user of records) {
+        const roleNameObj = await this.dataSource
+          .createQueryBuilder()
+          .select('role_name', 'roleName')
+          .from('role', 'r')
+          .innerJoin('user_role', 'ur', 'ur.role_id=r.role_id')
+          .innerJoin('user', 'u', 'u.user_id=ur.user_id')
+          .where('u.user_id=:userId', { userId: user.userId })
+          .distinct(true)
+          .getRawMany();
+        console.log(roleNameObj);
 
+        user.roleName = roleNameObj
+          .map((obj: { roleName: string }) => obj.roleName)
+          .join(',');
+      }
+    }
     return {
       records,
       total,
@@ -98,13 +120,13 @@ export class UserService {
   // 批量删除用户
   async BatchDeleteUser(UserIdList: number[]) {
     if (!UserIdList || UserIdList.length === 0) {
-      throw new BusinessException(ErrorCode.USER_NOT_EXIST);
+      throw new BusinessException(ErrorCode.INVALID_PARAM);
     }
     await this.userRepository
-      .createQueryBuilder('Builder')
+      .createQueryBuilder()
       .delete() //指定操作为删除
-      .from(User) //从哪个表删除
-      .where('Builder.userId IN (...:UserIdList)', { UserIdList })
+      .from('user') //从哪个表删除
+      .where('user_id IN (:...UserIdList)', { UserIdList })
       .execute();
   }
 
