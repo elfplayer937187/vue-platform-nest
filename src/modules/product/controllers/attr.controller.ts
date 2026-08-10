@@ -22,7 +22,9 @@ export class AttrController {
   @Post('saveAttrInfo')
   @ApiOperation({ summary: '新增/更新属性（有id→更新，无id→新增）' })
   async SaveAttrInfo(@Body() dto: SaveAttrDto) {
-    if (dto.id) {
+    console.log(dto);
+
+    if (dto.attrId) {
       return this.attrService.updateAttr(dto);
     } else {
       return this.attrService.createAttr(dto);

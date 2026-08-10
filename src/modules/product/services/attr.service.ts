@@ -56,7 +56,7 @@ export class AttrService {
         const values = dto.attrValueList.map((attrValue) => ({
           attrValueId: new Date().getTime() + Math.floor(Math.random() * 1000),
           valueName: attrValue.valueName || '未知姓名',
-          attrId: attrValue.attrValueId,
+          attrId: attrId,
         }));
         await manager
           .createQueryBuilder()
@@ -81,11 +81,12 @@ export class AttrService {
           categoryId: dto.categoryId,
           categoryLevel: dto.categoryLevel,
         })
-        .where('attr.attr_id=:id', { id: dto.id })
+        .where('attr.attr_id=:id', { id: dto.attrId })
         .execute();
 
       const existId: number[] = [];
       for (const attrValue of dto.attrValueList) {
+        // 如果attr下的value有id就更新
         if (attrValue.attrValueId) {
           // 更新
           existId.push(attrValue.attrValueId);
@@ -93,9 +94,10 @@ export class AttrService {
             .createQueryBuilder()
             .update('attr_value')
             .set({ valueName: attrValue.valueName })
-            .where('attr_id=:id', { id: attrValue.attrValueId })
+            .where('attr_value_id=:id', { id: attrValue.attrValueId })
             .execute();
         } else {
+          // 没有id就新增
           const newId = new Date().getTime() + Math.floor(Math.random() * 1000);
           existId.push(newId);
           await manager
@@ -105,7 +107,7 @@ export class AttrService {
             .values({
               attrValueId: newId,
               valueName: attrValue.valueName,
-              attrId: dto.id,
+              attrId: dto.attrId,
             })
             .execute();
         }
@@ -114,18 +116,22 @@ export class AttrService {
 
       // 删除不在本次传入列表中的旧属性值
       if (existId.length > 0) {
+        console.log(111);
+        console.log(existId);
+
         await manager
           .createQueryBuilder()
           .delete()
           .from('attr_value')
-          .where('attr_value_id NOT IN ...(:existId)', { existId })
+          .where('attr_value_id NOT IN (:...existId)', { existId })
+          .andWhere('attr_id =:attrId', { attrId: dto.attrId })
           .execute();
       } else {
         await manager
           .createQueryBuilder()
           .delete()
           .from('attr_value')
-          .where('attr_id=:id', { id: dto.id })
+          .where('attr_id=:id', { id: dto.attrId })
           .execute();
       }
     });
@@ -147,7 +153,7 @@ export class AttrService {
         .createQueryBuilder()
         .delete()
         .from('attr')
-        .where('attr_id=:Attr', { Attr })
+        .where('attr_id=:attrId', { attrId: AttrId })
         .execute();
     });
     return null;

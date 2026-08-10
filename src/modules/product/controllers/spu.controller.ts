@@ -63,6 +63,6 @@ export class SpuController {
     @Param('limit', ParseIntPipe) limit: number,
     @Query('category3Id') category3Id: number,
   ) {
-    return this.spuService.GetSpuPagination(page, limit, category3Id);
+    return this.spuService.GetSpuPagination(category3Id, page, limit);
   }
 }

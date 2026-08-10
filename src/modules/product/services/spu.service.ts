@@ -135,12 +135,14 @@ export class SpuService {
       });
     const spuInfo: paginationReturn<Spu> = {
       records: records as Spu[],
-      total: total as number,
+      total: Number(total),
       size: limit,
       current: page,
       searchCount: true,
       pages: Math.ceil((total as number) / limit),
     };
+    console.log(spuInfo);
+
     return spuInfo;
   }
 

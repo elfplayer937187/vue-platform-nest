@@ -6,12 +6,14 @@ import {
   IsOptional,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 // 单个属性值
 export class AttrValueItemDto {
   @ApiProperty({ description: '属性值ID(更新时必传)', required: false })
   @IsOptional()
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   attrValueId?: number;
 
   @ApiProperty({ description: '属性值名称' })
@@ -28,7 +30,8 @@ export class SaveAttrDto {
   })
   @IsOptional()
   @IsNumber()
-  id?: number;
+  @Transform(({ value }) => Number(value))
+  attrId?: number;
 
   @ApiProperty({ description: '属性名称' })
   @IsNotEmpty({ message: '属性名称不能为空' })
@@ -38,6 +41,7 @@ export class SaveAttrDto {
   @ApiProperty({ description: '所属三级分类ID' })
   @IsNotEmpty({ message: '分类ID不能为空' })
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   categoryId: number;
 
   @ApiProperty({ description: '分类级别', example: 3 })

@@ -21,7 +21,12 @@ export class Spu extends BaseEntity {
   })
   spuName: string;
 
-  @Column({ type: 'bigint', name: 'category3_id', comment: '三级分类ID' })
+  @Column({
+    type: 'bigint',
+    name: 'category3_id',
+    comment: '三级分类ID',
+    transformer: bigintTransformer,
+  })
   category3Id: number;
 
   @Column({

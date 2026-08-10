@@ -33,6 +33,7 @@ export class Menu extends BaseEntity {
     charset: 'utf8mb4',
     collation: 'utf8mb4_0900_ai_ci',
     name: 'to_code',
+    default: '',
     comment: '重定向路径',
   })
   toCode: string;
@@ -44,7 +45,7 @@ export class Menu extends BaseEntity {
   })
   type: number;
 
-  @Column({ length: 100, comment: '状态' })
+  @Column({ length: 100, default: '', comment: '状态' })
   status: string;
 
   @Column({ type: 'int', comment: '层级:1/2/3=菜单,4=按钮权限' })
