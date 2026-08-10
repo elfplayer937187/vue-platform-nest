@@ -141,8 +141,6 @@ export class SpuService {
       searchCount: true,
       pages: Math.ceil((total as number) / limit),
     };
-    console.log(spuInfo);
-
     return spuInfo;
   }
 
@@ -178,7 +176,7 @@ export class SpuService {
         .addSelect('spu_id', 'spuId')
         .from('sale_attr_value', 'saleAttrValue')
         .where('saleAttrValue.sale_attr_id = :saleAttrId', {
-          saleAttrId: spuAttr.baseSaleAttrId,
+          saleAttrId: spuAttr.spuSaleAttrId,
         })
         .andWhere('saleAttrValue.spu_id = :spuId', { spuId })
         .getRawMany();

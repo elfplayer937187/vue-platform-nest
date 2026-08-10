@@ -44,6 +44,7 @@ async function bootstrap() {
     .build();
   // 静态资源配置
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+    // 访问的时候把这段去掉从而访问join拼接字符串对应的文件夹
     prefix: '/api/uploads/',
   });
   const document = SwaggerModule.createDocument(app, swaggerConfig);
