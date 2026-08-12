@@ -2,28 +2,46 @@ services:
   mysql:
     image: mysql:8.0
     container_name: nest_guigu_mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root123456
       MYSQL_DATABASE: nest_guigu
+      MYSQL_USER: admin 
+      MYSQL_PASSWORD: admin123
+      TZ: Asia/Shanghai
     ports:
-      - '3307:3306'
+      - '127.0.0.1:3306:3306'
     volumes:
       - nest_guigu_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
     healthcheck:
-      test:
-        [
-          'CMD',
-          'mysqladmin',
-          'ping',
-          '-h',
-          'localhost',
-          '-u',
-          'root',
-          '-proot123456',
-        ]
-      interval: 5s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
       timeout: 5s
-      retries: 20
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest_vue3_backend
+    restart: always
+    ports:
+      - "10086:10086"
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+      DB_DATABASE: nest_guigu
+      JWT_SECRET: ElfPlayer937187
+      JWT_EXPIRES_IN: 24h
+    depends_on:
+      mysql:
+        condition: service_healthy   # ← 等 MySQL 健康检查通过再启动
+    volumes:
+      - ./uploads:/app/uploads
 
 volumes:
   nest_guigu_data:

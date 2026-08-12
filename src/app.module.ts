@@ -30,8 +30,8 @@ import { ProductModule } from './modules/product/product.module';
         password: config.get('database.password'),
         database: config.get('database.database'),
         autoLoadEntities: true, // 自动加载 Entity 文件,之后的只需要forFeature注入
-        synchronize: true, // 开发环境自动建表，生产必须关！
-        logging: true, // 控制台输出 SQL
+        synchronize: config.get('database.synchronize'), // 开发自动建表，生产关闭
+        logging: config.get('database.logging'), // 开发输出 SQL，生产关闭
         timezone: '+08:00',
       }),
     }),
