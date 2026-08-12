@@ -236,8 +236,8 @@ export class SkuService {
       await manager
         .createQueryBuilder()
         .delete()
-        .from('sku_sale_attr_value', 'ssav')
-        .where('ssav.sku_id=:skuId', { skuId })
+        .from('sku_sale_attr_value')
+        .where('sku_id = :skuId', { skuId })
         .execute();
 
       await manager
