@@ -146,11 +146,10 @@ export class SpuService {
 
   // 获取图片列表
   async GetImages(spuId: number) {
-    return this.spuImageRepository
-      .createQueryBuilder('spu')
-      .where('spu.spu_id = :spuId', { spuId })
-      .orderBy('id', 'ASC')
-      .getRawMany();
+    return this.spuImageRepository.find({
+      where: { spuId },
+      order: { id: 'ASC' },
+    });
   }
 
   //获取Spu销售属性列表
@@ -176,10 +175,12 @@ export class SpuService {
         .addSelect('spu_id', 'spuId')
         .from('sale_attr_value', 'saleAttrValue')
         .where('saleAttrValue.sale_attr_id = :saleAttrId', {
-          saleAttrId: spuAttr.spuSaleAttrId,
+          saleAttrId: spuAttr.baseSaleAttrId,
         })
         .andWhere('saleAttrValue.spu_id = :spuId', { spuId })
         .getRawMany();
+      console.log(spuAttrValueList);
+
       spuAttr.spuSaleAttrList = spuAttrValueList;
     }
     return spuAttrList;
@@ -193,10 +194,10 @@ export class SpuService {
         .createQueryBuilder()
         .update('spu')
         .set({
-          spu_name: dto.spuName,
-          category3_id: dto.category3Id,
+          spuName: dto.spuName,
+          category3Id: dto.category3Id,
           description: dto.description,
-          tm_id: dto.tmId,
+          tmId: dto.tmId,
         })
         .where('spu_id= :spuId', { spuId: dto.id })
         .execute();
@@ -218,10 +219,10 @@ export class SpuService {
             .insert()
             .into('spu_image_list')
             .values({
-              image_id: Date.now() + Math.floor(Math.random() * 10000),
-              image_name: spuImage.imageName,
-              image_url: spuImage.imageUrl,
-              spu_id: dto.id,
+              imageId: Date.now() + Math.floor(Math.random() * 10000),
+              imageName: spuImage.imageName,
+              imageUrl: spuImage.imageUrl,
+              spuId: dto.id,
             })
             .execute();
         }

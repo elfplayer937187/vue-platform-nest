@@ -122,6 +122,7 @@ export class SkuService {
             .insert()
             .into(SkuAttrValue)
             .values({
+              skuId,
               skuAttrValueId: Date.now() + Math.floor(Math.random() * 10000),
               attrId: skuAttrValue.attrId,
               attrName: attrName?.name,

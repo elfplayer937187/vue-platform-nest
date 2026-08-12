@@ -35,7 +35,7 @@ export class SpuController {
   }
   @Get('spuImageList/:id')
   @ApiOperation({ summary: '获取 SPU 图片列表' })
-  async getSpuImageList(@Param('id') id: number) {
+  async getSpuImageList(@Param('id', ParseIntPipe) id: number) {
     return this.spuService.GetImages(id);
   }
 
@@ -56,7 +56,8 @@ export class SpuController {
   async deleteSpu(@Param('id') id: number) {
     return this.spuService.removeSpu(id);
   }
-  @Get(':page/:limit')
+
+  @Get('spuPage/:page/:limit')
   @ApiOperation({ summary: '获取spu分页列表' })
   async getSpuPagination(
     @Param('page', ParseIntPipe) page: number,

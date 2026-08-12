@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -23,6 +24,7 @@ export class SPUImageItemDto {
 export class SpuSaleAttrValueItemDto {
   @ApiProperty({ description: '销售属性字典ID' })
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   baseSaleAttrId: number;
 
   @ApiProperty({ description: '属性值名称' })
@@ -33,6 +35,7 @@ export class SpuSaleAttrValueItemDto {
 export class SpuSaleAttrItemDto {
   @ApiProperty({ description: '销售属性字典ID' })
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   BaseSaleAttrId: number;
 
   @ApiProperty({ description: '销售属性名称' })
@@ -51,6 +54,7 @@ export class SaveSpuDto {
   @ApiProperty({ description: 'spu的id', required: false })
   @IsNumber()
   @IsNotEmpty({ message: 'spuid不为空' })
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   id?: number; //spu的id
 
@@ -65,6 +69,7 @@ export class SaveSpuDto {
 
   @ApiProperty({ description: '品牌ID' })
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   tmId: number;
 
   @ApiProperty({ description: '三级分类ID' })

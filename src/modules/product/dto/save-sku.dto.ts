@@ -14,6 +14,7 @@ export class SkuImageItemDto {
 
   @ApiProperty({ description: 'SPU 图片ID' })
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   spuImageId: number;
 
   @ApiProperty({ description: '是否默认', default: '0' })
