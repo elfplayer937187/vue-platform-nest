@@ -22,6 +22,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AssignRoleDto } from './dto/assign-user.dto';
 import { BatchRemoveDto } from './dto/batch-remove.dto';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @ApiTags('用户管理')
 @Controller('admin/acl/user')
@@ -34,6 +35,14 @@ export class UserController {
   @ApiOperation({ summary: '用户新增接口' })
   async AddUser(@Body() dto: CreateUserDTO) {
     await this.userService.createUser(dto);
+  }
+  @ApiOperation({ summary: '给用户更改头像' })
+  @Put('updateAvatar')
+  async UpdateUserAvatar(
+    @CurrentUser('userId') userId: number,
+    @Body('avatar') avatar: string,
+  ) {
+    return this.userService.AssignAvatarForUser(userId, avatar);
   }
 
   // 查看用户分配 - 放到通用路由前面，避免被 :page/:limit 截胡

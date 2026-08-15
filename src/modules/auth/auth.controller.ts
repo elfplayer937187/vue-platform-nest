@@ -21,9 +21,7 @@ export class AuthController {
   @ApiBearerAuth('Token')
   @UseGuards(JwtAuthGuard)
   async GetUserInfo(@CurrentUser('userId') userId: number) {
-    console.log(userId);
-
-    return await this.authService.getUserInfo(userId);
+    return this.authService.getUserInfo(userId);
   }
 
   // 用户登出接口

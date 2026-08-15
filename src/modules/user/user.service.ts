@@ -174,4 +174,16 @@ export class UserService {
     });
     return null;
   }
+
+  //更改用户头像
+  async AssignAvatarForUser(userId: number, avatar: string) {
+    // 寻找一下用户
+    const user = await this.userRepository.findOneBy({ userId });
+    if (!user) {
+      throw new BusinessException(ErrorCode.USER_NOT_EXIST);
+    }
+    // 找到更换头像
+    await this.userRepository.update({ userId }, { avatar });
+    return null;
+  }
 }
