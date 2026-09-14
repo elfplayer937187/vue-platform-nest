@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
+import registerConfig from './config/register.config';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RoleModule } from './modules/role/role.module';
@@ -17,7 +18,7 @@ import { ProductModule } from './modules/product/product.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
-      load: [databaseConfig, jwtConfig],
+      load: [databaseConfig, jwtConfig, registerConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

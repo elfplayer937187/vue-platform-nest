@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDTO {
@@ -16,4 +16,9 @@ export class CreateUserDTO {
   @ApiProperty({ description: '密码' })
   @MinLength(6, { message: '密码不能少于5位数' })
   password: string;
+
+  @ApiProperty({ description: '手机号', required: false })
+  @IsOptional()
+  @IsString()
+  phone?: string;
 }

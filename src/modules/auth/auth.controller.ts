@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDTO } from '../user/dto/login.dto';
+import { RegisterDTO } from '../user/dto/register.dto';
 import { JwtAuthGuard } from './auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
@@ -14,6 +15,12 @@ export class AuthController {
   @ApiOperation({ summary: '用户登录接口' })
   async login(@Body() userDto: LoginDTO) {
     return await this.authService.login(userDto);
+  }
+
+  @Post('register')
+  @ApiOperation({ summary: '用户注册接口' })
+  async register(@Body() userDto: RegisterDTO) {
+    return await this.authService.register(userDto);
   }
 
   @Get('info')

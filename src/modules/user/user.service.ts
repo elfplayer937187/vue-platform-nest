@@ -16,8 +16,9 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectDataSource() private dataSource: DataSource, //用于处理事务
   ) {}
-  // 注册用户
-  async createUser(dto: CreateUserDTO) {
+  // 创建用户
+  // 返回保存后的用户,注册流程需要拿到userId去挂默认角色
+  async createUser(dto: CreateUserDTO): Promise<User> {
     const ExistUser = await this.userRepository.findOne({
       where: { username: dto.username },
     });
@@ -29,12 +30,11 @@ export class UserService {
       userId: Date.now(), //先用时间戳
       username: dto.username,
       name: dto.name,
+      phone: dto.phone,
       password: await hashPassword(dto.password),
     });
-    console.log(newUser);
 
-    await this.userRepository.save(newUser);
-    return true;
+    return await this.userRepository.save(newUser);
   }
 
   // 查询用户(包含密码)

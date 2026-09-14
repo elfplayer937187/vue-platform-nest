@@ -10,6 +10,8 @@ export enum ErrorCode {
   MENU_NODE_EXIST = 208,
   NO_ROUTE = 209,
   NO_SKU = 210,
+  PASSWORD_NOT_MATCH = 211,
+  DEFAULT_ROLE_NOT_EXIST = 212,
 }
 // 错误信息
 export const ErrorMessages: Record<number, string> = {
@@ -24,4 +26,7 @@ export const ErrorMessages: Record<number, string> = {
   [ErrorCode.MENU_NODE_EXIST]: '该节点下有子节点，不可以删除',
   [ErrorCode.NO_ROUTE]: '请求路径不存在',
   [ErrorCode.NO_SKU]: '该sku不存在',
+  [ErrorCode.PASSWORD_NOT_MATCH]: '两次输入的密码不一致',
+  [ErrorCode.DEFAULT_ROLE_NOT_EXIST]:
+    '默认角色不存在,请检查DEFAULT_ROLE_NAME配置',
 };
